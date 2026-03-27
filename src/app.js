@@ -10,6 +10,7 @@ const { errorHandler } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const vocabRoutes = require('./routes/vocabRoutes');
 const grammarRoutes = require('./routes/grammarRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/vocab', vocabRoutes);
 app.use('/grammar', grammarRoutes);
+app.use('/ai', aiRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

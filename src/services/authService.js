@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { prisma } = require('../config/prisma');
+const  prisma  = require('../config/prisma');
 const { ApiError } = require('../utils/ApiError');
 
 function signToken(user) {
