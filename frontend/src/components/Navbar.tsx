@@ -33,12 +33,18 @@ export const Navbar = () => {
             >
               Grammar
             </button>
+            <button
+              onClick={() => navigate('/profile')}
+              className="text-gray-700 hover:text-blue-600 font-medium transition"
+            >
+              Profile
+            </button>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
           <span className="text-gray-700 font-medium hidden md:inline">
-            {user?.email}
+            Hi, {user?.name || user?.email}
           </span>
           <button
             onClick={handleLogout}

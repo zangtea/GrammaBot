@@ -9,14 +9,26 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    
-    if (savedUser && token) {
-      setUser(JSON.parse(savedUser));
-      setIsAuthenticated(true);
+
+    if (!token) {
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    authService.me()
+      .then((data) => {
+        setUser(data.user);
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        authService.logout();
+        setUser(null);
+        setIsAuthenticated(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -43,6 +55,17 @@ export const useAuth = () => {
     }
   }, []);
 
+  const updateProfile = useCallback(async (data: { name?: string; email?: string; password?: string }) => {
+    setIsLoading(true);
+    try {
+      const response = await authService.updateProfile(data);
+      setUser(response.user);
+      return response;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const logout = useCallback(() => {
     authService.logout();
     setUser(null);
@@ -55,6 +78,7 @@ export const useAuth = () => {
     isLoading,
     login,
     register,
+    updateProfile,
     logout,
   };
 };

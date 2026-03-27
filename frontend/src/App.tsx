@@ -5,6 +5,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { VocabPage } from './pages/VocabPage';
 import { GrammarPage } from './pages/GrammarPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { LoadingSpinner } from './components/LoadingSpinner';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -64,6 +65,14 @@ function App() {
           element={
             <ProtectedRoute>
               <GrammarPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

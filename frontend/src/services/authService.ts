@@ -13,6 +13,16 @@ interface RegisterRequest {
   password: string;
 }
 
+interface MeResponse {
+  user: User;
+}
+
+interface UpdateProfileRequest {
+  name?: string;
+  email?: string;
+  password?: string;
+}
+
 export const authService = {
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/login', credentials);
@@ -27,6 +37,19 @@ export const authService = {
     const response = await api.post<AuthResponse>('/auth/register', data);
     if (response.data.token) {
       localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.token);
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
+  me: async (): Promise<MeResponse> => {
+    const response = await api.get<MeResponse>('/auth/me');
+    return response.data;
+  },
+
+  updateProfile: async (data: UpdateProfileRequest): Promise<MeResponse> => {
+    const response = await api.put<MeResponse>('/auth/me', data);
+    if (response.data.user) {
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
     }
     return response.data;

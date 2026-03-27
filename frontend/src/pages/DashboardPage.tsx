@@ -90,6 +90,13 @@ export const DashboardPage = () => {
                 <h4 className="font-semibold text-purple-600">🎓 Grammar</h4>
                 <p className="text-sm text-gray-600">Get AI-powered grammar help</p>
               </a>
+              <a
+                href="/profile"
+                className="block p-4 border border-green-200 rounded-lg hover:bg-green-50 transition"
+              >
+                <h4 className="font-semibold text-green-600">👤 Profile</h4>
+                <p className="text-sm text-gray-600">Update your account settings</p>
+              </a>
             </div>
           </div>
 
