@@ -1,83 +1,91 @@
-# GrammaBot - AI English Learning App Backend
+# GrammaBot - AI English Learning App
 
-Complete backend for an AI English Learning Application built with Node.js, Express, Prisma ORM, and MySQL.
+Complete full-stack AI English Learning Application built with Node.js, Express, Prisma ORM, MySQL, React, TypeScript, and Vite.
 
 ## Project Structure
 
 ```
 GrammaBot/
-├── prisma/
-│   └── schema.prisma
-├── src/
-│   ├── app.js
-│   ├── config/
-│   │   └── prisma.js
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── grammarController.js
-│   │   └── vocabController.js
-│   ├── middleware/
-│   │   ├── auth.js
-│   │   ├── errorHandler.js
-│   │   ├── notFound.js
-│   │   └── validate.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── grammarRoutes.js
-│   │   └── vocabRoutes.js
-│   ├── services/
-│   │   ├── authService.js
-│   │   ├── grammarService.js
-│   │   └── vocabService.js
-│   └── utils/
-│       └── ApiError.js
-├── package.json
-├── .env.example
+├── backend/
+│   ├── prisma/
+│   │   ├── migrations/
+│   │   └── schema.prisma
+│   ├── src/
+│   │   ├── app.js
+│   │   ├── server.js
+│   │   ├── config/
+│   │   │   └── prisma.js
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── package.json
+│   ├── .env.example
+│   └── README.md
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── README.md
+├── .gitignore
 └── README.md
 ```
 
 ## Tech Stack
 
+### Backend
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **ORM**: Prisma
 - **Database**: MySQL
-- **Authentication**: JWT (JSON Web Tokens)
+- **Authentication**: JWT
 - **Password Hashing**: bcryptjs
 - **Validation**: Zod
 - **Logging**: Morgan
 
+### Frontend
+- **Framework**: React 18
+- **Language**: TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **HTTP Client**: Axios
+
 ## Features
 
-### 1. Authentication
-- User registration with email and password
-- User login with JWT token generation
-- JWT middleware for protected routes
-- Password hashing with bcryptjs
+### Authentication
+- User registration with name, email, password
+- User login with JWT token
+- Profile management (update name, email, password)
+- Protected routes with JWT middleware
 
-### 2. Vocabulary Management
-- Add new vocabulary words with phonetic transcription and definition
-- Retrieve all vocabulary words for a user
-- Mark vocabulary as learned
-- Sorted by learned status and creation date
+### Vocabulary Management
+- Add vocabulary words with phonetic and definition
+- View and manage personal vocabulary list
+- Mark words as learned
+- Search and filter vocabulary
 
-### 3. Grammar Query History
-- Save grammar queries and AI responses
-- Retrieve grammar query history for a user
-- Ordered by creation date (newest first)
+### Grammar Assistance
+- AI-powered grammar queries
+- Query history tracking
+- Contextual grammar explanations
 
 ## Setup Instructions
 
 ### Prerequisites
-- Node.js v16+
-- MySQL 5.7+
+- Node.js v18+
+- MySQL 8.0+
 - npm or yarn
 
-### Installation
+### Backend Setup
 
-1. Clone the repository and navigate to the project directory:
+1. Navigate to backend directory:
 ```bash
-cd GrammaBot
+cd backend
 ```
 
 2. Install dependencies:
@@ -92,112 +100,103 @@ cp .env.example .env
 
 4. Update `.env` with your MySQL credentials:
 ```
-NODE_ENV=development
+DATABASE_URL="mysql://username:password@localhost:3306/grammabot"
+JWT_SECRET="your-super-secret-jwt-key-here-change-this-in-production"
+JWT_EXPIRES_IN="7d"
 PORT=3000
-DATABASE_URL=mysql://username:password@localhost:3306/grammabot
-JWT_SECRET=your_long_random_secret_key_here
-JWT_EXPIRES_IN=7d
 ```
 
-5. Set up Prisma and create the database:
+5. Set up database:
 ```bash
-npx prisma migrate dev --name init
-```
+# Generate Prisma client
+npm run prisma:generate
 
-6. (Optional) Open Prisma Studio to view/manage data:
-```bash
+# Run migrations
+npm run prisma:migrate
+
+# (Optional) Open Prisma Studio
 npm run prisma:studio
 ```
 
-## Running the Application
-
-### Development Mode
+6. Start development server:
 ```bash
 npm run dev
 ```
 
-### Production Mode
+### Frontend Setup
+
+1. Navigate to frontend directory:
 ```bash
-npm start
+cd frontend
 ```
 
-The API will be available at `http://localhost:3000`
+2. Install dependencies:
+```bash
+npm install
+```
 
-## API Endpoints
+3. Start development server:
+```bash
+npm run dev
+```
 
-### Authentication (/auth)
+The frontend will be available at `http://localhost:5173` and backend at `http://localhost:3000`.
 
-#### Register
-- **POST** `/auth/register`
-- **Body**: `{ email: string, password: string }`
-- **Response**: `{ user: { id, email, createdAt }, token: string }`
+## API Documentation
 
-#### Login
-- **POST** `/auth/login`
-- **Body**: `{ email: string, password: string }`
-- **Response**: `{ user: { id, email, createdAt }, token: string }`
+### Authentication Endpoints
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login user
+- `GET /auth/me` - Get current user profile
+- `PUT /auth/me` - Update user profile
 
-### Vocabulary (/vocab)
-*Requires JWT Authentication*
+### Vocabulary Endpoints
+- `POST /vocab` - Add new vocabulary word
+- `GET /vocab/:userId` - Get user's vocabulary list
+- `PUT /vocab/:id/learned` - Mark word as learned
 
-#### Add Word
-- **POST** `/vocab`
-- **Headers**: `Authorization: Bearer {token}`
-- **Body**: `{ word: string, phonetic?: string, definition: string }`
-- **Response**: `{ id, word, phonetic, definition, learned, userId, createdAt, updatedAt }`
-
-#### Get User Words
-- **GET** `/vocab/:userId`
-- **Headers**: `Authorization: Bearer {token}`
-- **Response**: `[ { id, word, phonetic, definition, learned, userId, createdAt, updatedAt } ]`
-
-#### Mark as Learned
-- **PATCH** `/vocab/:id/learned`
-- **Headers**: `Authorization: Bearer {token}`
-- **Response**: `{ id, word, phonetic, definition, learned: true, userId, createdAt, updatedAt }`
-
-### Grammar (/grammar)
-*Requires JWT Authentication*
-
-#### Save Query and Response
-- **POST** `/grammar`
-- **Headers**: `Authorization: Bearer {token}`
-- **Body**: `{ query: string, response: string }`
-- **Response**: `{ id, query, response, userId, createdAt }`
-
-#### Get History
-- **GET** `/grammar/:userId`
-- **Headers**: `Authorization: Bearer {token}`
-- **Response**: `[ { id, query, response, userId, createdAt } ]`
-
-## Environment Variables
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| NODE_ENV | Environment | development, production |
-| PORT | Server port | 3000 |
-| DATABASE_URL | MySQL connection string | mysql://user:password@localhost:3306/grammabot |
-| JWT_SECRET | JWT signing secret | long_random_string |
-| JWT_EXPIRES_IN | JWT expiration time | 7d |
+### Grammar Endpoints
+- `POST /grammar` - Submit grammar query
+- `GET /grammar/:userId` - Get grammar history
 
 ## Database Schema
 
-### User
-- `id` (Int, Primary Key, Auto-increment)
-- `email` (String, Unique)
-- `password` (String)
-- `createdAt` (DateTime)
-- `updatedAt` (DateTime)
+The application uses MySQL with the following main tables:
+- `users` - User accounts
+- `vocabularies` - Vocabulary words
+- `grammar_histories` - Grammar query history
 
-### Vocabulary
-- `id` (Int, Primary Key)
-- `word` (String)
-- `phonetic` (String, Optional)
-- `definition` (String)
-- `learned` (Boolean, default: false)
-- `userId` (Int, Foreign Key)
-- `createdAt` (DateTime)
-- `updatedAt` (DateTime)
+## Development
+
+### Running Tests
+```bash
+# Backend tests
+cd backend && npm test
+
+# Frontend tests
+cd frontend && npm test
+```
+
+### Building for Production
+```bash
+# Backend
+cd backend && npm run build
+
+# Frontend
+cd frontend && npm run build
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+## License
+
+MIT License
 
 ### GrammarHistory
 - `id` (Int, Primary Key)
